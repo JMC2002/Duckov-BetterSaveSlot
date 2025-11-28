@@ -1,0 +1,60 @@
+﻿[h1]更好的存档位 - 复制粘贴 + 108 存档槽[/h1]
+
+[h2]前言[/h2]
+其实挺早就打算写这个 MOD 的，结果中途官方多加了几个存档就先没写了。
+
+[h2]功能[/h2]
+
+[h3]快速复制存档[/h3]
+主要功能是给每个存档槽增加一个复制粘贴功能。
+
+[img]https://images.steamusercontent.com/ugc/10679665207389436975/5D6FDE0D9B334F3572445F7E8CE0A06BCD54522D/[/img]
+
+点击复制后，点击粘贴可以将存档带备份一起粘贴到某个存档槽。
+
+[img]https://images.steamusercontent.com/ugc/14804574306949158584/B6CD66FE10ADEBE540CB45355270756DED4FF562/[/img]
+
+粘贴时会询问是否确认覆盖。
+
+[img]https://images.steamusercontent.com/ugc/17781048547438932044/1CD0AC3AD61CFED7A02AFBEDDE272ABF5608FFC2/[/img]
+
+粘贴会连同备份一起复制，方便存档管理。
+
+[h3]额外存档位[/h3]
+
+在存档路径下的 JmcModLibConfig 文件夹中找到 [b]BetterSaveSlot.json[/b] 下的 “额外存档槽位数量” 修改键值。
+
+[img]https://images.steamusercontent.com/ugc/10757431386483704033/D8D4A8C42B201FD0D1DC5A8153F55EE8E8D6FFE1/[/img]
+
+或者安装 ModSetting 后在游戏内修改即可自定义额外存档槽数量。  
+额外槽位最多可达 102 个，加上游戏自带的 6 个，你最多可拥有 [b]108[/b] 个存档位：
+
+[img]https://images.steamusercontent.com/ugc/14895613627819169674/7806246A105D1F9210AF5BBA0C50CF63F123B56F/[/img]
+[img]https://images.steamusercontent.com/ugc/16230052203983039423/049D98F27AB89BE39B6A6DE853656935B1D5F1F6/[/img]
+
+我想 108 个应该对大部分人来说够了吧！
+
+[h2]安装[/h2]
+本 MOD 需要前置：  
+• [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3613297900]JmcModLib[/url]  
+• [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3589088839]Harmony[/url]  
+
+请务必将这两个前置放在本 MOD 前加载。
+
+如果需要游戏内修改额外存档槽数量，请安装：  
+• [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3595729494]ModSetting[/url]
+
+[h2]提示[/h2]
+本 MOD 删除存档位并不会实际删除对应存档，因此不用担心因 MOD 失效导致存档安全问题。
+
+[h2]相关链接[/h2]
+• [url=https://github.com/JMC2002/Duckov-BetterSaveSlot]Github 仓库[/url]  
+• [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3614076662]创意工坊链接[/url]  
+• [url=https://www.bilibili.com/video/BV1V4URBPER7/?share_source=copy_web]演示视频[/url]
+
+[h2]其他[/h2]
+[list]
+[*] 本 MOD 内置游戏支持的所有语言的 `.csv` 文件，如果对翻译不满意，可自行修改 MOD 文件夹下 `Lang` 内的对应 `.csv`。
+[*] 如需反馈交流，可加群： [url=http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=Kii1sz9bmNmgEgnmsasbKn6h3etgSoQR]点击入群（617674584）[/url]
+[*] 如有问题或建议欢迎在讨论区留言；如果这个 MOD 对你有帮助，希望能点个 Star 和点赞支持！
+[/list]

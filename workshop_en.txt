@@ -1,0 +1,60 @@
+﻿[h1]Better Save Slots – Copy & Paste + 108 Save Slots[/h1]
+
+[h2]Introduction[/h2]
+I actually planned to make this MOD a long time ago, but during development the official game added more save slots, so I postponed it.
+
+[h2]Features[/h2]
+
+[h3]Quick Save Copying[/h3]
+The main feature is adding a copy & paste function to every save slot.
+
+[img]https://images.steamusercontent.com/ugc/10679665207389436975/5D6FDE0D9B334F3572445F7E8CE0A06BCD54522D/[/img]
+
+After clicking Copy, you can click Paste to copy a save file (including its backups) into another slot.
+
+[img]https://images.steamusercontent.com/ugc/14804574306949158584/B6CD66FE10ADEBE540CB45355270756DED4FF562/[/img]
+
+A confirmation window will appear before overwriting an existing save.
+
+[img]https://images.steamusercontent.com/ugc/17781048547438932044/1CD0AC3AD61CFED7A02AFBEDDE272ABF5608FFC2/[/img]
+
+Pasting also copies all backups, making save management easier.
+
+[h3]Additional Save Slots[/h3]
+
+To modify the number of extra save slots, go to your save directory, open the **JmcModLibConfig** folder, and edit the value of “Extra Save Slot Count” inside **BetterSaveSlot.json**.
+
+[img]https://images.steamusercontent.com/ugc/10757431386483704033/D8D4A8C42B201FD0D1DC5A8153F55EE8E8D6FFE1/[/img]
+
+Or, if you have ModSetting installed, you can adjust the value directly in game.  
+You can add up to 102 extra slots. Combined with the game's built-in 6 slots, you can have up to **108** save slots:
+
+[img]https://images.steamusercontent.com/ugc/14895613627819169674/7806246A105D1F9210AF5BBA0C50CF63F123B56F/[/img]
+[img]https://images.steamusercontent.com/ugc/16230052203983039423/049D98F27AB89BE39B6A6DE853656935B1D5F1F6/[/img]
+
+I think 108 slots should be enough for most people!
+
+[h2]Installation[/h2]
+This MOD requires the following dependencies:  
+• [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3613297900]JmcModLib[/url]  
+• [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3589088839]Harmony[/url]  
+
+Please make sure these two dependencies load *before* this MOD.
+
+If you want to modify the extra save slot count in-game, please install:  
+• [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3595729494]ModSetting[/url]
+
+[h2]Notes[/h2]
+This MOD does not permanently delete any save files when removing slots, so you don’t need to worry about losing saves if the MOD becomes unavailable.
+
+[h2]Related Links[/h2]
+• [url=https://github.com/JMC2002/Duckov-BetterSaveSlot]GitHub Repository[/url]  
+• [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3614076662]Workshop Page[/url]  
+• [url=https://www.bilibili.com/video/BV1V4URBPER7/?share_source=copy_web]Demo Video[/url]
+
+[h2]Others[/h2]
+[list]
+[*] This MOD includes `.csv` localization files for all languages supported by the game. If you are not satisfied with a translation, feel free to edit the corresponding `.csv` in the `Lang` folder.
+[*] For feedback or discussion, you may join the QQ group: [url=http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=Kii1sz9bmNmgEgnmsasbKn6h3etgSoQR]Click to Join (617674584)[/url]
+[*] If you have any issues or suggestions, feel free to leave a message in the discussion area. If this MOD helps you, a Star or a Like would be greatly appreciated!
+[/list]

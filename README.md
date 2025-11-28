@@ -34,6 +34,13 @@
 # 提示
 本MOD删除存档位并不会实际删除对应的存档，因此不用担心MOD挂掉会导致存档安全问题
 
+# 相关链接
+[Github仓库](https://github.com/JMC2002/Duckov-BetterSaveSlot)
+
+[创意工坊链接](https://steamcommunity.com/sharedfiles/filedetails/?id=3614076662)
+
+[演示视频](https://www.bilibili.com/video/BV1V4URBPER7/?share_source=copy_web&vd_source=44d0c79301287bc97d360d78d8e0ec0f)
+
 # 其他
 - 本MOD内置了游戏支持的所有语言的`.csv`，如果对翻译不满意，可以自行修改MOD文件夹下的`Lang`文件夹下的对应语言的`.csv`文件进行调整
 - 如需反馈交流，可以入群[点击入群（617674584）](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=Kii1sz9bmNmgEgnmsasbKn6h3etgSoQR&authKey=Hni0nbFlbd%2BfDZ1GoklCdtHw4r79SuEsHvz9Pi4qs020w1f8D2DHD8EEnNN1OXo6&noverify=0&group_code=617674584)

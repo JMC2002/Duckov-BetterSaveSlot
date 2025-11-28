@@ -1,4 +1,5 @@
-﻿using Duckov.UI.MainMenu;
+﻿using BetterSaveSlot.UI;
+using Duckov.UI.MainMenu;
 using HarmonyLib;
 using JmcModLib.Config;
 using JmcModLib.Config.UI;
@@ -115,7 +116,7 @@ namespace BetterSaveSlot
             }
             catch (Exception ex)
             {
-                ModLogger.Error($"[BetterSaveSlot] 扩展槽位失败: {ex}");
+                ModLogger.Error($"扩展槽位失败: {ex}");
             }
         }
 
@@ -147,7 +148,7 @@ namespace BetterSaveSlot
             {
                 _cachedOriginalCount = originalCount;
                 _cachedOriginalItemHeight = firstOriginal.GetComponent<RectTransform>().rect.height;
-                ModLogger.Info($"[BetterSaveSlot] 捕获原版数据: 单个高度={_cachedOriginalItemHeight}, 数量={_cachedOriginalCount}");
+                ModLogger.Info($"捕获原版数据: 单个高度={_cachedOriginalItemHeight}, 数量={_cachedOriginalCount}");
             }
         }
 
@@ -231,7 +232,7 @@ namespace BetterSaveSlot
                     backup.Capture(buttonsContainer as RectTransform);
                 }
 
-                // 【关键】锁定按钮高度，防止放入 ScrollView 后膨胀
+                // 锁定按钮高度，防止放入 ScrollView 后膨胀
                 EnforceButtonLayout(buttonsContainer);
 
                 RescueFloatingUI(buttonsContainer);
@@ -250,7 +251,7 @@ namespace BetterSaveSlot
             }
         }
 
-        // 【核心修改】基于纯净高度锁定布局
+        // 基于纯净高度锁定布局
         private static void EnforceButtonLayout(Transform container)
         {
             if (_cachedOriginalItemHeight <= 0) return; // 没抓到原版数据，不敢动
@@ -315,16 +316,13 @@ namespace BetterSaveSlot
             ModLogger.Info("[BetterSaveSlot] 已转换为 ScrollView");
         }
 
-        // 【核心修改】回退时动态计算高度
-        // 【核心修改】回退逻辑优化
-        // 【核心修复】数学计算高度 + 原地膨胀 (不使用 ContentSizeFitter)
         private static void RevertToNormalList(GameObject scrollViewObj, Transform container, int currentCount)
         {
-            ModLogger.Info($"[BetterSaveSlot] 回退到正常列表 (当前数量: {currentCount})...");
+            ModLogger.Info($"回退到正常列表 (当前数量: {currentCount})...");
 
             Transform originalParent = scrollViewObj.transform.parent;
 
-            // 1. 还原被救出的 UI
+            // 还原被救出的 UI
             var rescuedItems = originalParent.GetComponentsInChildren<RescuedUIBackup>(true);
             foreach (var marker in rescuedItems)
             {
@@ -333,14 +331,14 @@ namespace BetterSaveSlot
                 UnityEngine.Object.DestroyImmediate(marker);
             }
 
-            // 2. 还原容器层级
+            // 还原容器层级
             container.SetParent(originalParent, true);
             container.SetSiblingIndex(scrollViewObj.transform.GetSiblingIndex());
 
-            // 3. 销毁 ScrollView
+            // 销毁 ScrollView
             UnityEngine.Object.DestroyImmediate(scrollViewObj);
 
-            // 4. 恢复布局
+            // 恢复布局
             var backup = container.GetComponent<LayoutBackup>();
             if (backup != null)
             {
@@ -354,7 +352,7 @@ namespace BetterSaveSlot
                 if (_cachedOriginalCount > 0 && currentCount > _cachedOriginalCount)
                 {
                     // 1. 记录此时此刻的“正确状态”
-                    // 在拉伸状态下，rect.width 是屏幕算出来的正确宽度，我们把它存下来
+                    // 在拉伸状态下，rect.width 是屏幕算出来的正确宽度
                     float currentVisualWidth = rt.rect.width;
                     Vector3 originalWorldPos = rt.position; // 记录世界坐标，防止跑偏
 
@@ -370,20 +368,18 @@ namespace BetterSaveSlot
                     }
                     float targetHeight = padding + (itemHeight * currentCount) + (spacing * (currentCount - 1));
 
-                    // 3. 解除锚点拉伸 (Collapse Anchors to Pivot)
-                    // 无论原版锚点是什么，我们将它缩成和 Pivot 一致的点
-                    // 这样 sizeDelta 就代表了真实的宽和高，不再受父级拉伸影响
+                    // 3. 解除锚点拉伸
                     rt.anchorMin = rt.pivot;
                     rt.anchorMax = rt.pivot;
 
                     // 4. 应用计算好的尺寸
                     // 宽 = 刚才记录的原版视觉宽度
-                    // 高 = 我们算出来的目标高度
+                    // 高 = 算出来的目标高度
                     rt.sizeDelta = new Vector2(currentVisualWidth, targetHeight);
 
                     // 5. 还原世界坐标
                     // 因为改变 anchor 可能会导致 anchoredPosition 对应的位置发生变化
-                    // 我们强制把物体移回它刚才所在的世界坐标
+                    // 强制把物体移回它刚才所在的世界坐标
                     rt.position = originalWorldPos;
 
                     // 6. 确保不需要 Fitter
@@ -448,7 +444,7 @@ namespace BetterSaveSlot
             }
         }
 
-        // 【核心修改】基于纯净数据计算列表高度
+        // 基于纯净数据计算列表高度
         private static void AdjustScrollViewHeight(RectTransform svRect, Transform contentContainer)
         {
             // 如果没捕获到原版数据，就没法精确还原，只能兜底
@@ -498,7 +494,7 @@ namespace BetterSaveSlot
 
         public static void Cleanup()
         {
-            ModLogger.Info("[BetterSaveSlot] 开始执行 Cleanup...");
+            ModLogger.Info("开始执行 Cleanup...");
 
             var menu = UnityEngine.Object.FindObjectOfType<SaveSlotSelectionMenu>();
             if (menu == null) return;
@@ -509,15 +505,13 @@ namespace BetterSaveSlot
 
             Transform container = anyBtn.transform.parent;
 
-            // 1. 检查是否在 ScrollView 模式，如果是，先拆包
+            // 检查是否在 ScrollView 模式，如果是，先拆包
             if (container.parent != null && container.parent.name == ModScrollViewName)
             {
-                // 【修正点】这里传入 0，表示“我不需要扩容，直接给我恢复原版备份大小”
-                // 因为接下来我们马上就要把多余的槽位删了
                 RevertToNormalList(container.parent.gameObject, container, 0);
             }
 
-            // 2. 删除所有 Mod 生成的槽位
+            // 删除所有 Mod 生成的槽位
             var currentButtons = menu.GetComponentsInChildren<SaveSlotSelectionButton>(true);
             for (int i = currentButtons.Length - 1; i >= 0; i--)
             {
@@ -528,17 +522,15 @@ namespace BetterSaveSlot
                 }
             }
 
-            // 3. 删除原版槽位上的复制按钮
-            SaveSlotSelectionButtonPatch.Cleanup();
 
-            // 4. 重置缓存数据，确保下次启用 Mod 能重新捕获
+            // 重置缓存数据，确保下次启用 Mod 能重新捕获
             _cachedOriginalItemHeight = -1f;
             _cachedOriginalCount = -1;
 
-            // 5. 强制刷新布局
+            // 强制刷新布局
             LayoutRebuilder.ForceRebuildLayoutImmediate(container as RectTransform);
 
-            ModLogger.Info("[BetterSaveSlot] 清理完成。");
+            ModLogger.Info("清理完成。");
         }
 
     }

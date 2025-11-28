@@ -1,5 +1,6 @@
 ﻿using BetterSaveSlot.Core;
 using BetterSaveSlot.Patches;
+using BetterSaveSlot.UI;
 using JmcModLib.Core;
 using JmcModLib.Utils;
 
@@ -20,16 +21,19 @@ namespace BetterSaveSlot
         protected override void OnAfterSetup()
         {
             ModRegistry.Register(true, info, VersionInfo.Name, VersionInfo.Version)
+                       .RegisterL10n()
                        .RegisterLogger(uIFlags: LogConfigUIFlags.All)
                        .Done();
             harmonyHelper.OnEnable();
-            SaveSlotSelectionButtonPatch.ReapplyAll();
+            SaveSlotActionButton.ReapplyAll();
+            // L10n.LanguageChanged += SaveSlotSelectionButtonPatch.OnLanguegeChanged;
         }
 
         protected override void OnBeforeDeactivate()
         {
+            // L10n.LanguageChanged -= SaveSlotSelectionButtonPatch.OnLanguegeChanged;
             SaveSlotExpansionPatch.Cleanup();
-            SaveSlotSelectionButtonPatch.Cleanup();
+            SaveSlotActionButton.Cleanup();
             ModLogger.Info("Mod 已禁用，配置已保存");
         }
     }

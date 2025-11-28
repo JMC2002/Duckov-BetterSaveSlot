@@ -17,7 +17,7 @@ namespace BetterSaveSlot
     {
         [UIIntSlider(0, 102)]
         [Config("额外存档槽位数量")]
-        public static int ExtraSlotsCount = 20;
+        public static int ExtraSlotsCount = 0;
         public static int MaxVisibleSlots = 8;
     }
 
@@ -82,7 +82,7 @@ namespace BetterSaveSlot
             rt.anchoredPosition = anchoredPosition;
             rt.sizeDelta = sizeDelta;
             var vlg = rt.GetComponent<VerticalLayoutGroup>();
-            if (vlg != null) vlg.childForceExpandHeight = vlgExpandHeight;
+            vlg?.childForceExpandHeight = vlgExpandHeight;
         }
     }
 
@@ -163,7 +163,7 @@ namespace BetterSaveSlot
 
             var originalButtons = allButtons.Where(b => !b.name.StartsWith(ModdedSlotNamePrefix)).ToList();
             if (originalButtons.Count == 0) return;
-            int baseMaxIndex = originalButtons.Max(b => IndexAccessor.GetValue<SaveSlotSelectionButton, int>(b));
+            int baseMaxIndex = originalButtons.Max(IndexAccessor.GetValue<SaveSlotSelectionButton, int>);
 
             int targetMaxIndex = baseMaxIndex + ExtraSlotsConfig.ExtraSlotsCount;
 
@@ -184,7 +184,7 @@ namespace BetterSaveSlot
                     RefreshAccessor.InvokeVoid<SaveSlotSelectionButton>(newSlotScript);
 
                     var actionBtn = newSlotObj.GetComponentInChildren<SaveSlotActionButton>(true);
-                    if (actionBtn != null) actionBtn.Init(newSlotScript, newIndex);
+                    actionBtn?.Init(newSlotScript, newIndex);
 
                     newSlotObj.SetActive(true);
                 }
@@ -274,7 +274,7 @@ namespace BetterSaveSlot
 
         private static void CreateScrollView(Transform container)
         {
-            GameObject scrollViewObj = new GameObject(ModScrollViewName);
+            GameObject scrollViewObj = new(ModScrollViewName);
             RectTransform svRect = scrollViewObj.AddComponent<RectTransform>();
 
             scrollViewObj.transform.SetParent(container.parent, false);
@@ -421,7 +421,7 @@ namespace BetterSaveSlot
 
         private static void RescueFloatingUI(Transform container)
         {
-            List<Transform> toRescue = new List<Transform>();
+            List<Transform> toRescue = [];
             foreach (Transform child in container)
             {
                 if (child.GetComponent<SaveSlotSelectionButton>() == null)

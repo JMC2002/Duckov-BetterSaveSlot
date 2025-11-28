@@ -2,7 +2,6 @@
 using Duckov.UI.MainMenu;
 using HarmonyLib;
 using JmcModLib.Reflection;
-using JmcModLib.Utils;
 using UnityEngine;
 
 namespace BetterSaveSlot
@@ -46,6 +45,6 @@ namespace BetterSaveSlot
             actionScript.Init(__instance, slotIndex);
         }
 
- 
+
     }
 }

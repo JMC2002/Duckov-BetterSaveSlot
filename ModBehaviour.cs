@@ -8,11 +8,11 @@ namespace BetterSaveSlot
 {
     public class ModBehaviour : Duckov.Modding.ModBehaviour
     {
-        private HarmonyHelper harmonyHelper = new($"{VersionInfo.Name}");
-        void OnEnable()
+        private readonly HarmonyHelper harmonyHelper = new($"{VersionInfo.Name}");
+        private void OnEnable()
         {
         }
-        void OnDisable()
+        private void OnDisable()
         {
             ModLogger.Info("Mod 即将禁用，配置已保存");
             harmonyHelper.OnDisable();

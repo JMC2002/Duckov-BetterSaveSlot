@@ -1,6 +1,4 @@
-﻿using Duckov.Modding;
-
-namespace BetterSaveSlot.Core
+﻿namespace BetterSaveSlot.Core
 {
     public static class VersionInfo
     {

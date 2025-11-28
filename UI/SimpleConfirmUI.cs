@@ -22,7 +22,7 @@ namespace BetterSaveSlot.UI
             }
 
             // --- 1. 背景遮罩 ---
-            GameObject overlayObj = new GameObject("Mod_Confirm_Overlay");
+            GameObject overlayObj = new("Mod_Confirm_Overlay");
             overlayObj.transform.SetParent(canvas.transform, false);
             overlayObj.transform.SetAsLastSibling();
 
@@ -37,7 +37,7 @@ namespace BetterSaveSlot.UI
             bg.raycastTarget = true;
 
             // --- 2. 内容面板 (居中，更宽一点以容纳按钮) ---
-            GameObject panelObj = new GameObject("ContentPanel");
+            GameObject panelObj = new("ContentPanel");
             panelObj.transform.SetParent(overlayObj.transform, false);
 
             RectTransform panelRect = panelObj.AddComponent<RectTransform>();
@@ -49,14 +49,14 @@ namespace BetterSaveSlot.UI
 
             // --- 3. 资源获取 ---
             var refBtn = FindObjectOfType<SaveSlotSelectionButton>();
-            TMP_FontAsset font = refBtn != null ? refBtn.GetComponentInChildren<TextMeshProUGUI>()?.font : null;
+            TMP_FontAsset font = refBtn?.GetComponentInChildren<TextMeshProUGUI>()?.font;
 
             GameObject btnTemplate = null;
             var tempBtns = Resources.FindObjectsOfTypeAll<ContinueButton>();
             if (tempBtns != null && tempBtns.Length > 0) btnTemplate = tempBtns[0].gameObject;
 
             // --- 4. 标题文字 (加大字号) ---
-            GameObject textObj = new GameObject("Message");
+            GameObject textObj = new("Message");
             textObj.transform.SetParent(panelObj.transform, false);
 
             TextMeshProUGUI tmp = textObj.AddComponent<TextMeshProUGUI>();
@@ -78,7 +78,7 @@ namespace BetterSaveSlot.UI
             textRect.offsetMax = new Vector2(0, -20); // 留点顶边距
 
             // --- 5. 按钮容器 ---
-            GameObject btnContainer = new GameObject("Buttons");
+            GameObject btnContainer = new("Buttons");
             btnContainer.transform.SetParent(panelObj.transform, false);
             RectTransform btnConRect = btnContainer.AddComponent<RectTransform>();
             // 占下半部分
@@ -164,7 +164,7 @@ namespace BetterSaveSlot.UI
             TextMeshProUGUI tmp = btnObj.GetComponentInChildren<TextMeshProUGUI>();
             if (tmp == null)
             {
-                GameObject tObj = new GameObject("Text");
+                GameObject tObj = new("Text");
                 tObj.transform.SetParent(btnObj.transform);
                 tmp = tObj.AddComponent<TextMeshProUGUI>();
             }

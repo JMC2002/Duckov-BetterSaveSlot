@@ -34,7 +34,7 @@ namespace BetterSaveSlot.UI
 
             if (canvas == null)
             {
-                ModLogger.Error("[BetterSaveSlot] 严重错误：找不到任何 Canvas，无法显示弹窗。");
+                ModLogger.Error("严重错误：找不到任何 Canvas，无法显示弹窗。");
                 onCancel?.Invoke();
                 return;
             }

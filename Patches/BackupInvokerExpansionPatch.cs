@@ -28,6 +28,8 @@ namespace BetterSaveSlot.Patches
             TargetFadeGroup?.Hide();
         }
     }
+    // 用于标记被 Mod 隐藏的原版装饰物（如小三角）
+    public class HiddenDecorationMarker : MonoBehaviour { }
 
     [HarmonyPatch(typeof(SavesBackupRestoreInvoker))]
     public static class BackupInvokerExpansionPatch
@@ -47,27 +49,46 @@ namespace BetterSaveSlot.Patches
         [HarmonyPostfix]
         public static void AwakePostfix(SavesBackupRestoreInvoker __instance)
         {
+            // 当新对象生成时，执行逻辑
+            ApplyLogic(__instance);
+        }
+
+        // =========================================================
+        // 热重载入口，没生效，算了问题不大
+        // =========================================================
+        public static void ReapplyAll()
+        {
+            var invoker = UnityEngine.Object.FindObjectOfType<SavesBackupRestoreInvoker>();
+            if (invoker != null)
+            {
+                ModLogger.Info("热重载检测：正在重新应用备份菜单补丁...");
+                ApplyLogic(invoker);
+            }
+        }
+
+        // 核心逻辑提取，供 Awake 和 ReapplyAll 调用
+        private static void ApplyLogic(SavesBackupRestoreInvoker instance)
+        {
             try
             {
-                var buttonsList = ButtonsAccessor.GetValue<SavesBackupRestoreInvoker, List<Button>>(__instance);
+                var buttonsList = ButtonsAccessor.GetValue<SavesBackupRestoreInvoker, List<Button>>(instance);
                 if (buttonsList == null || buttonsList.Count == 0) return;
 
+                // 1. 捕获数据
                 CaptureOriginalData(buttonsList);
 
-                // 扩展按钮
-                ExpandButtons(__instance, buttonsList);
+                // 2. 扩展按钮
+                ExpandButtons(instance, buttonsList);
 
-                // 应用滚动逻辑
-                ApplyDropdownScrollLogic(__instance, buttonsList);
+                // 3. 应用滚动列表
+                ApplyDropdownScrollLogic(instance, buttonsList);
 
-                // 挂载状态重置器
-                // 因为 SavesBackupRestoreInvoker 没有 OnDisable 方法可供 Patch
-                // 所以我们手动挂一个组件来帮它监听
-                var fadeGroup = FadeGroupAccessor.GetValue<SavesBackupRestoreInvoker, FadeGroup>(__instance);
+                // 4. 挂载状态重置器 (解决退出菜单后状态不重置的问题)
+                var fadeGroup = FadeGroupAccessor.GetValue<SavesBackupRestoreInvoker, FadeGroup>(instance);
                 if (fadeGroup != null)
                 {
-                    var resetter = __instance.gameObject.GetComponent<BackupMenuStateResetter>();
-                    if (resetter == null) resetter = __instance.gameObject.AddComponent<BackupMenuStateResetter>();
+                    var resetter = instance.gameObject.GetComponent<BackupMenuStateResetter>();
+                    if (resetter == null) resetter = instance.gameObject.AddComponent<BackupMenuStateResetter>();
                     resetter.TargetFadeGroup = fadeGroup;
                 }
             }
@@ -77,6 +98,7 @@ namespace BetterSaveSlot.Patches
             }
         }
 
+        // ... (CaptureOriginalData 保持不变) ...
         private static void CaptureOriginalData(List<Button> buttons)
         {
             if (_cachedItemHeight > 0) return;
@@ -88,6 +110,7 @@ namespace BetterSaveSlot.Patches
             }
         }
 
+        // ... (ExpandButtons 保持不变) ...
         private static void ExpandButtons(SavesBackupRestoreInvoker invoker, List<Button> buttonsList)
         {
             int targetCount = _cachedOriginalCount + ExtraSlotsConfig.ExtraSlotsCount;
@@ -127,19 +150,11 @@ namespace BetterSaveSlot.Patches
         {
             var tmps = btnObj.GetComponentsInChildren<TextMeshProUGUI>(true);
             bool found = false;
-            foreach (var t in tmps)
-            {
-                t.text = newIndex.ToString();
-                found = true;
-            }
-
+            foreach (var t in tmps) { t.text = newIndex.ToString(); found = true; }
             if (!found)
             {
                 var texts = btnObj.GetComponentsInChildren<Text>(true);
-                foreach (var t in texts)
-                {
-                    t.text = newIndex.ToString();
-                }
+                foreach (var t in texts) { t.text = newIndex.ToString(); }
             }
         }
 
@@ -149,6 +164,34 @@ namespace BetterSaveSlot.Patches
             Transform originalParent = buttonsList[0].transform.parent;
 
             if (originalParent.Find(ModScrollViewName) != null) return;
+
+            // --- 修复问题 2：隐藏多余的装饰物 (小三角) ---
+            // 遍历父容器的所有子物体，如果它既不是 MainBtn，也不是 SlotBtn，那它就是装饰物
+            foreach (Transform child in originalParent)
+            {
+                // 跳过 MainButton
+                if (mainBtn != null && child == mainBtn.transform) continue;
+
+                // 跳过 Slot 按钮 (通过判断是否在 list 里)
+                // 注意：这里用 Contains 比较引用，非常安全
+                // 我们只隐藏那些“不在按钮列表里”的东西
+                bool isSlotBtn = false;
+                foreach (var btn in buttonsList)
+                {
+                    if (child == btn.transform) { isSlotBtn = true; break; }
+                }
+
+                if (!isSlotBtn)
+                {
+                    // 找到了杂项 (小三角)，隐藏它
+                    child.gameObject.SetActive(false);
+                    // 标记以便 Cleanup 时恢复
+                    if (child.GetComponent<HiddenDecorationMarker>() == null)
+                        child.gameObject.AddComponent<HiddenDecorationMarker>();
+                }
+            }
+
+            // --- 以下是原本的创建 ScrollView 逻辑 (保持不变) ---
 
             GameObject scrollViewObj = new GameObject(ModScrollViewName);
             RectTransform svRect = scrollViewObj.AddComponent<RectTransform>();
@@ -236,22 +279,34 @@ namespace BetterSaveSlot.Patches
             var buttonsList = ButtonsAccessor.GetValue<SavesBackupRestoreInvoker, List<Button>>(invoker);
             if (buttonsList == null || buttonsList.Count == 0) return;
 
-            // 1. 拆包
+            // Content -> ScrollView -> OriginalParent
             Transform content = buttonsList[0].transform.parent;
+
+            // 1. 拆包
             if (content.parent != null && content.parent.name == ModScrollViewName)
             {
                 Transform scrollView = content.parent;
                 Transform originalParent = scrollView.parent;
 
+                // 移回按钮
                 int targetIndex = scrollView.GetSiblingIndex();
-
                 foreach (var btn in buttonsList)
                 {
                     btn.transform.SetParent(originalParent, true);
                     btn.transform.SetSiblingIndex(targetIndex++);
                 }
 
+                // 销毁 ScrollView
                 UnityEngine.Object.DestroyImmediate(scrollView.gameObject);
+
+                // --- 恢复被隐藏的装饰物 ---
+                var hiddenDecos = originalParent.GetComponentsInChildren<HiddenDecorationMarker>(true);
+                foreach (var marker in hiddenDecos)
+                {
+                    marker.gameObject.SetActive(true);
+                    UnityEngine.Object.DestroyImmediate(marker);
+                }
+
                 LayoutRebuilder.ForceRebuildLayoutImmediate(originalParent as RectTransform);
             }
 
@@ -266,7 +321,7 @@ namespace BetterSaveSlot.Patches
                 }
             }
 
-            //删除辅助组件
+            // 3. 删除辅助组件
             var resetter = invoker.GetComponent<BackupMenuStateResetter>();
             if (resetter != null) UnityEngine.Object.DestroyImmediate(resetter);
 

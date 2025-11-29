@@ -32,7 +32,7 @@ namespace BetterSaveSlot.UI
         // 创建滚动视图结构
         public static void CreateScrollView(Transform container, string scrollViewName)
         {
-            GameObject scrollViewObj = new GameObject(scrollViewName);
+            GameObject scrollViewObj = new(scrollViewName);
             RectTransform svRect = scrollViewObj.AddComponent<RectTransform>();
 
             scrollViewObj.transform.SetParent(container.parent, false);
@@ -152,7 +152,7 @@ namespace BetterSaveSlot.UI
         // 拯救非列表项的 UI
         public static void RescueFloatingUI(Transform container, System.Type itemComponentType)
         {
-            List<Transform> toRescue = new List<Transform>();
+            List<Transform> toRescue = [];
             foreach (Transform child in container)
             {
                 // 只要没挂载指定的 Item 脚本，就视为杂项

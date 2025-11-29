@@ -144,7 +144,7 @@ namespace BetterSaveSlot.UI
             if (Input.GetKeyDown(KeyCode.Escape))
             {
                 // 手动触发取消逻辑
-                if (_onCancelAction != null) _onCancelAction.Invoke();
+                _onCancelAction?.Invoke();
                 Close();
             }
         }

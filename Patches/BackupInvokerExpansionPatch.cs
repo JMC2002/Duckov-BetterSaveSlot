@@ -1,5 +1,4 @@
 ﻿using BetterSaveSlot.Core;
-using BetterSaveSlot.UI;
 using Duckov.UI.Animations;
 using Duckov.UI.SavesRestore;
 using HarmonyLib;
@@ -135,7 +134,7 @@ namespace BetterSaveSlot.Patches
                 newBtn.onClick.RemoveAllListeners();
                 newBtn.onClick.AddListener(() =>
                 {
-                    if (fadeGroup != null) fadeGroup.Hide();
+                    fadeGroup?.Hide();
                     SavesSystem.SetFile(newSlotIndex);
                     restorePanel?.Open(newSlotIndex);
                 });
@@ -193,7 +192,7 @@ namespace BetterSaveSlot.Patches
 
             // --- 以下是原本的创建 ScrollView 逻辑 (保持不变) ---
 
-            GameObject scrollViewObj = new GameObject(ModScrollViewName);
+            GameObject scrollViewObj = new(ModScrollViewName);
             RectTransform svRect = scrollViewObj.AddComponent<RectTransform>();
 
             scrollViewObj.transform.SetParent(originalParent, false);
@@ -233,7 +232,7 @@ namespace BetterSaveSlot.Patches
             sr.scrollSensitivity = 30f;
             sr.movementType = ScrollRect.MovementType.Elastic;
 
-            GameObject contentObj = new GameObject("Content");
+            GameObject contentObj = new("Content");
             RectTransform contentRect = contentObj.AddComponent<RectTransform>();
             contentObj.transform.SetParent(scrollViewObj.transform, false);
 

@@ -228,10 +228,10 @@ namespace BetterSaveSlot.UI
         {
             ModLogger.Debug($"尝试为对象 {slotScript.name} 检查/创建按钮...");
             // 1. 防止重复添加
-            if (slotScript.transform.Find(ModBtnName) != null) 
+            if (slotScript.transform.Find(ModBtnName) != null)
             {
                 ModLogger.Debug($"对象 {slotScript.name} 已存在按钮，跳过。");
-                return; 
+                return;
             }
 
             // 2. 获取 index

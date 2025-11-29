@@ -107,6 +107,7 @@ namespace BetterSaveSlot.UI
                     ModLogger.Info($"目标 Slot {targetSlot} 已存在，请求用户确认...");
 
                     SimpleConfirmUI.Show(
+                        transform,
                         $"<color=yellow>{L10n.Get("警告")}: {L10n.Get("覆盖存档")}</color>\n\n" +
                         L10n.GetF("粘贴警告1", null, targetSlot) + "\n" +
                         $"{L10n.Get("粘贴警告2")}\n" +
@@ -225,12 +226,19 @@ namespace BetterSaveSlot.UI
         // =========================================================
         public static void EnsureButton(SaveSlotSelectionButton slotScript)
         {
+            ModLogger.Debug($"尝试为对象 {slotScript.name} 检查/创建按钮...");
             // 1. 防止重复添加
-            if (slotScript.transform.Find(ModBtnName) != null) return;
+            if (slotScript.transform.Find(ModBtnName) != null) 
+            {
+                ModLogger.Debug($"对象 {slotScript.name} 已存在按钮，跳过。");
+                return; 
+            }
 
-            // 2. 获取 index (你需要确保 MemberAccessor 可用)
+            // 2. 获取 index
             var indexAccessor = MemberAccessor.Get(typeof(SaveSlotSelectionButton), "index");
             int slotIndex = indexAccessor.GetValue<SaveSlotSelectionButton, int>(slotScript);
+
+            ModLogger.Debug($"正在创建按钮 -> 父物体: {slotScript.name}, 槽位Index: {slotIndex}");
 
             // 3. 寻找模板
             var templates = Resources.FindObjectsOfTypeAll<ContinueButton>();
@@ -254,6 +262,11 @@ namespace BetterSaveSlot.UI
 
             // 6. 挂载逻辑
             var actionScript = newBtnObj.AddComponent<SaveSlotActionButton>();
+            if (actionScript == null)
+            {
+                ModLogger.Error($"严重错误：SaveSlotActionButton 组件挂载失败！");
+                return;
+            }
             actionScript.Init(slotScript, slotIndex);
         }
 

@@ -87,6 +87,26 @@ namespace BetterSaveSlot
     }
 
     [HarmonyPatch(typeof(SaveSlotSelectionMenu))]
+    public static class SaveSlotInputBlocker
+    {
+        // 拦截 OnCancel 方法
+        [HarmonyPatch("OnCancel")]
+        [HarmonyPrefix]
+        public static bool OnCancelPrefix()
+        {
+            // 如果弹窗是激活状态
+            if (SimpleConfirmUI.IsActive)
+            {
+                ModLogger.Debug("拦截了主菜单的 ESC，因为弹窗正在显示。");
+
+                return false; // 返回 false 阻止原版方法执行
+            }
+
+            return true; // 没有弹窗时，允许原版逻辑执行 (退回主菜单)
+        }
+    }
+
+    [HarmonyPatch(typeof(SaveSlotSelectionMenu))]
     public static class SaveSlotExpansionPatch
     {
         private const string ModdedSlotNamePrefix = "Modded_SaveSlot_";

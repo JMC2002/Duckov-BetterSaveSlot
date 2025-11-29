@@ -8,16 +8,34 @@ using UnityEngine.UI;
 namespace BetterSaveSlot.UI
 {
     // =========================================================
-    // 1. 简单的确认弹窗系统 (新增)
+    // 简单的确认弹窗系统 
     // =========================================================
     public class SimpleConfirmUI : MonoBehaviour
     {
-        public static void Show(string message, Action onConfirm, Action onCancel = null)
+        // 全局静态标记：当前是否有弹窗在显示
+        public static bool IsActive { get; private set; } = false;
+
+        // 一个引用，方便在外部强制关闭它
+        private static SimpleConfirmUI? _instance;
+        private Action _onCancelAction;
+
+        public static void Show(Transform contextObject, string message, Action onConfirm, Action onCancel = null)
         {
-            var canvas = FindObjectOfType<Canvas>();
+
+            // 防止重复打开
+            if (IsActive) return;
+
+            // 直接从当前按钮找到它所属的 Canvas
+            Canvas canvas = contextObject.GetComponentInParent<Canvas>();
+
+            // 如果实在找不到（极少见），再兜底
+            if (canvas == null) canvas = FindObjectOfType<Canvas>();
+
+
             if (canvas == null)
             {
-                onConfirm?.Invoke();
+                ModLogger.Error("[BetterSaveSlot] 严重错误：找不到任何 Canvas，无法显示弹窗。");
+                onCancel?.Invoke();
                 return;
             }
 
@@ -26,11 +44,28 @@ namespace BetterSaveSlot.UI
             overlayObj.transform.SetParent(canvas.transform, false);
             overlayObj.transform.SetAsLastSibling();
 
+            // 挂载脚本
+            var ui = overlayObj.AddComponent<SimpleConfirmUI>();
+            _instance = ui;
+            ui._onCancelAction = onCancel;
+
+            // --- 设置状态为 True ---
+            IsActive = true;
+
             RectTransform overlayRect = overlayObj.AddComponent<RectTransform>();
             overlayRect.anchorMin = Vector2.zero;
             overlayRect.anchorMax = Vector2.one;
             overlayRect.offsetMin = Vector2.zero;
             overlayRect.offsetMax = Vector2.zero;
+
+            // --- 修复点 2：强制覆盖层级 (Override Sorting) ---
+            // 为了防止弹窗被其他 UI 遮挡（比如游戏原本的特效层），
+            // 我们给弹窗单独加一个 Canvas 组件，并把层级设为极高。
+            Canvas overlayCanvas = overlayObj.AddComponent<Canvas>();
+            overlayCanvas.overrideSorting = true;
+            overlayCanvas.sortingOrder = 30000; // 设置一个很大的数字
+
+            overlayObj.AddComponent<GraphicRaycaster>();
 
             Image bg = overlayObj.AddComponent<Image>();
             bg.color = new Color(0, 0, 0, 0.9f); // 加深一点背景
@@ -101,6 +136,29 @@ namespace BetterSaveSlot.UI
                 Destroy(overlayObj);
                 onCancel?.Invoke();
             });
+        }
+
+        private void Update()
+        {
+            // 2. 监听 ESC 键
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                // 手动触发取消逻辑
+                if (_onCancelAction != null) _onCancelAction.Invoke();
+                Close();
+            }
+        }
+
+        public void Close()
+        {
+            IsActive = false;
+            _instance = null;
+            Destroy(gameObject); // 销毁自己 (Overlay)
+        }
+
+        private void OnDestroy()
+        {
+            IsActive = false;
         }
 
         private static void CreateButton(GameObject template, GameObject parent, string text, Color textColor, Vector2 centerAnchor, Action onClick)

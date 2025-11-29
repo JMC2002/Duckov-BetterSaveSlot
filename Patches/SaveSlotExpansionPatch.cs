@@ -1,4 +1,5 @@
-﻿using BetterSaveSlot.UI;
+﻿using BetterSaveSlot.Core;
+using BetterSaveSlot.UI;
 using Duckov.UI.MainMenu;
 using HarmonyLib;
 using JmcModLib.Config;
@@ -104,7 +105,20 @@ namespace BetterSaveSlot
 
             return true; // 没有弹窗时，允许原版逻辑执行 (退回主菜单)
         }
+
+        [HarmonyPatch("OnDisable")]
+        [HarmonyPostfix]
+        public static void OnDisablePostfix()
+        {
+            // 当存档选择菜单关闭/隐藏时，强制清除复制状态
+            if (CopyStateManager.SourceSlotIndex != null)
+            {
+                ModLogger.Debug("菜单关闭，自动重置复制状态。");
+                CopyStateManager.ClearSource();
+            }
+        }
     }
+
 
     [HarmonyPatch(typeof(SaveSlotSelectionMenu))]
     public static class SaveSlotExpansionPatch
